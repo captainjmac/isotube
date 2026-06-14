@@ -115,11 +115,11 @@ export function SyncSettingsDialog({
 
                 <div className="space-y-4">
                     {/* Connection Status */}
-                    <div className="flex items-center justify-between p-3 bg-gray-900 rounded-lg">
+                    <div className="flex items-center justify-between p-3 bg-background rounded-lg">
                         <div className="flex items-center gap-2">
                             <div
                                 className={`w-2 h-2 rounded-full ${
-                                    isConnected ? 'bg-green-500' : 'bg-gray-500'
+                                    isConnected ? 'bg-status-completed' : 'bg-status-unwatched'
                                 }`}
                             />
                             <span className="text-sm">
@@ -127,27 +127,27 @@ export function SyncSettingsDialog({
                             </span>
                         </div>
                         {isSyncing && (
-                            <span className="text-xs text-gray-400 animate-pulse">
+                            <span className="text-xs text-muted-foreground animate-pulse">
                                 Syncing...
                             </span>
                         )}
                     </div>
 
                     {isConnected && (
-                        <div className="text-xs text-gray-400">
+                        <div className="text-xs text-muted-foreground">
                             Last synced: {formatLastSync(lastSyncedAt)}
                         </div>
                     )}
 
                     {error && (
-                        <div className="p-3 bg-red-900/50 border border-red-700 rounded-lg text-sm text-red-200">
+                        <div className="p-3 bg-destructive/15 border border-destructive/40 rounded-lg text-sm text-destructive">
                             {error}
                         </div>
                     )}
 
                     {/* Sync code */}
                     <div className="space-y-2">
-                        <label className="block text-sm font-medium text-gray-300">
+                        <label className="block text-sm font-medium text-foreground/80">
                             Sync code
                         </label>
                         <div className="flex gap-2">
@@ -156,7 +156,7 @@ export function SyncSettingsDialog({
                                 value={syncKey}
                                 onChange={(e) => setSyncKey(e.target.value)}
                                 placeholder="Generate a new code or paste one from another device"
-                                className="flex-1 px-3 py-2 bg-gray-900 border border-gray-700 rounded-md text-white placeholder-gray-500 font-mono text-xs focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                className="flex-1 px-3 py-2 bg-muted border border-border rounded-md text-foreground placeholder-muted-foreground/60 font-mono text-xs focus:outline-none focus:ring-2 focus:ring-ring"
                                 disabled={isConnected}
                                 spellCheck={false}
                                 autoComplete="off"
@@ -164,7 +164,7 @@ export function SyncSettingsDialog({
                             <button
                                 onClick={handleCopy}
                                 disabled={!syncKey}
-                                className="px-3 py-2 bg-gray-700 hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed rounded-md text-white text-sm transition-colors whitespace-nowrap"
+                                className="px-3 py-2 bg-secondary hover:bg-accent disabled:opacity-50 disabled:cursor-not-allowed rounded-md text-foreground text-sm transition-colors whitespace-nowrap"
                             >
                                 {copied ? 'Copied!' : 'Copy'}
                             </button>
@@ -173,17 +173,17 @@ export function SyncSettingsDialog({
                             <button
                                 onClick={handleGenerate}
                                 disabled={isGenerating}
-                                className="text-sm text-blue-400 hover:underline disabled:opacity-50"
+                                className="text-sm text-brand hover:underline disabled:opacity-50"
                             >
                                 {isGenerating ? 'Generating...' : 'Generate new code'}
                             </button>
                         )}
-                        <p className="text-xs text-gray-500">
+                        <p className="text-xs text-muted-foreground/70">
                             Paste this code on another device to sync the same library.
                             Anyone with the code can read and edit it — keep it private.
                         </p>
                         {genError && (
-                            <div className="p-3 bg-red-900/50 border border-red-700 rounded-lg text-sm text-red-200">
+                            <div className="p-3 bg-destructive/15 border border-destructive/40 rounded-lg text-sm text-destructive">
                                 {genError}
                             </div>
                         )}
@@ -194,8 +194,8 @@ export function SyncSettingsDialog({
                         <div
                             className={`p-3 rounded-lg text-sm ${
                                 testResult.success
-                                    ? 'bg-green-900/50 border border-green-700 text-green-200'
-                                    : 'bg-red-900/50 border border-red-700 text-red-200'
+                                    ? 'bg-status-completed/15 border border-status-completed/40 text-status-completed'
+                                    : 'bg-destructive/15 border border-destructive/40 text-destructive'
                             }`}
                         >
                             {testResult.success
@@ -209,7 +209,7 @@ export function SyncSettingsDialog({
                     {isConnected ? (
                         <button
                             onClick={handleDisconnect}
-                            className="px-4 py-2 bg-red-600 hover:bg-red-700 rounded-md text-white text-sm transition-colors"
+                            className="px-4 py-2 bg-destructive hover:bg-destructive/90 rounded-md text-white text-sm transition-colors"
                         >
                             Disconnect
                         </button>
@@ -218,14 +218,14 @@ export function SyncSettingsDialog({
                             <button
                                 onClick={handleTest}
                                 disabled={!syncKey.trim() || isTesting}
-                                className="px-4 py-2 bg-gray-700 hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed rounded-md text-white text-sm transition-colors"
+                                className="px-4 py-2 bg-secondary hover:bg-accent disabled:opacity-50 disabled:cursor-not-allowed rounded-md text-foreground text-sm transition-colors"
                             >
                                 {isTesting ? 'Testing...' : 'Test Connection'}
                             </button>
                             <button
                                 onClick={handleSave}
                                 disabled={!syncKey.trim() || (testResult !== null && !testResult.success)}
-                                className="px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed rounded-md text-white text-sm transition-colors"
+                                className="px-4 py-2 bg-brand text-brand-foreground hover:bg-brand-strong disabled:opacity-50 disabled:cursor-not-allowed rounded-md text-sm transition-colors shadow-[0_2px_12px_-3px_var(--glow)]"
                             >
                                 Connect & Enable Sync
                             </button>

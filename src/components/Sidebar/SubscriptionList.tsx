@@ -76,12 +76,12 @@ export function SubscriptionList() {
     <div className="shrink-0 overflow-auto p-2">
       <div className="flex items-center gap-1">
         <div className="flex-1 flex items-center gap-2 min-w-0 px-3 py-2">
-          <ChannelIcon className="w-4 h-4 flex-shrink-0 text-gray-400"/>
+          <ChannelIcon className="w-4 h-4 flex-shrink-0 text-muted-foreground"/>
           <span className="text-sm font-medium truncate">
                         {activeSubscription?.name ?? 'Select Channel'}
                     </span>
           {activePlaylist && (
-            <span className="text-xs text-gray-400">({activePlaylist.videos.length})</span>
+            <span className="text-xs text-muted-foreground">({activePlaylist.videos.length})</span>
           )}
         </div>
 
@@ -89,8 +89,8 @@ export function SubscriptionList() {
         {activeSubscription && (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button className="p-1.5 rounded hover:bg-gray-600 transition-colors">
-                <svg className="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+              <button className="p-1.5 rounded hover:bg-accent transition-colors">
+                <svg className="w-4 h-4 text-muted-foreground" fill="currentColor" viewBox="0 0 20 20">
                   <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"/>
                 </svg>
               </button>
@@ -110,10 +110,10 @@ export function SubscriptionList() {
         {/* Expand/collapse button */}
         <button
           onClick={() => setIsExpanded(!isExpanded)}
-          className="p-1.5 rounded hover:bg-gray-600 transition-colors"
+          className="p-1.5 rounded hover:bg-accent transition-colors"
         >
           <svg
-            className={`w-4 h-4 text-gray-400 transition-transform ${isExpanded ? 'rotate-180' : ''}`}
+            className={`w-4 h-4 text-muted-foreground transition-transform ${isExpanded ? 'rotate-180' : ''}`}
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -125,16 +125,16 @@ export function SubscriptionList() {
 
       {/* Expandable subscription list */}
       {isExpanded && (
-        <div className="mt-2 border-t border-gray-700 pt-2">
+        <div className="mt-2 border-t border-border pt-2">
           <div className="flex items-center justify-between px-2 py-1 mb-2">
-                        <span className="text-xs font-semibold text-gray-400 uppercase tracking-wide">
+                        <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
                             Channels
                         </span>
           </div>
 
           {/* Subscription list */}
           {subscriptions.length === 0 ? (
-            <p className="text-gray-500 text-sm px-2 py-4 text-center">
+            <p className="text-muted-foreground/70 text-sm px-2 py-4 text-center">
               No subscriptions yet.
               <br/>
               <span className="text-xs mt-1 block">

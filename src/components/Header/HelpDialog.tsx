@@ -13,7 +13,7 @@ export function HelpDialog() {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <button className="p-2 rounded hover:bg-gray-700 transition-colors">
+        <button className="p-2 rounded hover:bg-accent transition-colors">
           <HelpIcon/>
         </button>
       </DialogTrigger>
@@ -23,7 +23,7 @@ export function HelpDialog() {
           <DialogTitle>
             <div className="col-span-full flex items-center gap-3">
               <Logo/>
-              <h2 className="text-white">
+              <h2 className="text-foreground">
                 About IsoTube
               </h2>
             </div>
@@ -33,7 +33,7 @@ export function HelpDialog() {
           </DialogDescription>
         </DialogHeader>
 
-        <div className="flex flex-col gap-4 text-sm text-gray-300">
+        <div className="flex flex-col gap-4 text-sm text-foreground/80">
           <p>
             The purpose of IsoTube is to enable you to watch playlists of YouTube videos you have
             pre-prepared, without the possibility of getting consumed by the YouTube algorithm and lost in an

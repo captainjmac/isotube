@@ -245,10 +245,12 @@ export function usePlaylists() {
     updateVideo(playlistId, videoId, {status});
   }, [updateVideo]);
 
-  const setVideoProgress = useCallback((playlistId: string, videoId: string, progress: number) => {
+  const setVideoProgress = useCallback((playlistId: string, videoId: string, progress: number, duration?: number) => {
     updateVideo(playlistId, videoId, {
       progress,
       status: progress > 0 ? 'in_progress' : 'unwatched',
+      // Capture total length when known so the list can show how far through we are.
+      ...(duration && duration > 0 ? {duration} : {}),
     });
   }, [updateVideo]);
 

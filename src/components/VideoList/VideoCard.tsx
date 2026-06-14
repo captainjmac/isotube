@@ -32,17 +32,22 @@ export const VideoCard = memo(function VideoCard({
 
   const handleEditTitle = () => setIsEditing(true);
 
+  // How far through the video we are (0-100), when the total length is known.
+  const progressPct = video.status === 'in_progress' && video.duration
+    ? Math.min(100, Math.max(0, (video.progress / video.duration) * 100))
+    : 0;
+
   return (
     <div
-      className={`flex gap-3 p-2 rounded-lg cursor-pointer transition-all min-w-0 overflow-hidden ${
+      className={`flex gap-3 p-2 rounded-xl cursor-pointer transition-all duration-200 min-w-0 overflow-hidden ${
         isPlaying
-          ? 'bg-blue-600/20 ring-2 ring-blue-500'
-          : 'bg-gray-800 hover:bg-gray-750'
+          ? 'bg-brand/10 glow-active'
+          : 'bg-card/70 border border-border/60 hover:bg-accent hover:-translate-y-0.5'
       }`}
       onClick={onPlay}
     >
       {/* Thumbnail */}
-      <div className="relative flex-shrink-0 w-16 aspect-video rounded overflow-hidden bg-gray-700">
+      <div className="relative flex-shrink-0 w-16 aspect-video rounded-lg overflow-hidden bg-muted">
         <img
           src={video.thumbnail}
           alt={video.title}
@@ -80,7 +85,7 @@ export const VideoCard = memo(function VideoCard({
               }
             }}
             onClick={(e) => e.stopPropagation()}
-            className="px-2 py-1 bg-gray-700 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="px-2 py-1 bg-muted rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-ring"
             autoFocus
           />
         ) : (
@@ -97,34 +102,48 @@ export const VideoCard = memo(function VideoCard({
               onUpdate({ starred: !video.starred });
             }}
             className={`text-sm leading-none hover:scale-110 transition-transform ${
-              video.starred ? 'text-yellow-400' : 'text-gray-500 hover:text-gray-400'
+              video.starred ? 'text-rating' : 'text-muted-foreground/60 hover:text-muted-foreground'
             }`}
             title={video.starred ? 'Unstar' : 'Star'}
           >
             {video.starred ? '★' : '☆'}
           </button>
-          <span
-            className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs ${
-              video.status === 'completed'
-                ? 'bg-green-500/20 text-green-400'
-                : video.status === 'in_progress'
-                  ? 'bg-yellow-500/20 text-yellow-400'
-                  : 'bg-gray-500/20 text-gray-400'
-            }`}
-          >
-            <span className={`w-1.5 h-1.5 rounded-full ${statusColors[video.status]}`}/>
-            {statusLabels[video.status]}
-          </span>
+          {video.status === 'in_progress' ? (
+            <span
+              className="relative inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs overflow-hidden bg-status-progress/15 text-status-progress"
+              title={video.duration ? `${Math.round(progressPct)}% watched` : statusLabels.in_progress}
+            >
+              {/* Background fill showing how far through the video we are */}
+              <span
+                className="absolute inset-y-0 left-0 bg-status-progress/35 transition-[width] duration-500 ease-out"
+                style={{width: `${progressPct}%`}}
+                aria-hidden="true"
+              />
+              <span className="relative z-10 w-1.5 h-1.5 rounded-full bg-status-progress"/>
+              <span className="relative z-10">{statusLabels.in_progress}</span>
+            </span>
+          ) : (
+            <span
+              className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs ${
+                video.status === 'completed'
+                  ? 'bg-status-completed/15 text-status-completed'
+                  : 'bg-status-unwatched/15 text-status-unwatched'
+              }`}
+            >
+              <span className={`w-1.5 h-1.5 rounded-full ${statusColors[video.status]}`}/>
+              {statusLabels[video.status]}
+            </span>
+          )}
 
           {video.uploadDate && (
-            <span className="text-xs text-gray-500">
+            <span className="text-xs font-mono tabular-nums text-muted-foreground/70">
               {new Date(video.uploadDate).toLocaleDateString()}
             </span>
           )}
 
           {/* Rating stars */}
           {video.rating > 0 && (
-            <span className="text-yellow-400 text-xs">
+            <span className="text-rating text-xs">
               {'★'.repeat(video.rating)}
               {'☆'.repeat(5 - video.rating)}
             </span>

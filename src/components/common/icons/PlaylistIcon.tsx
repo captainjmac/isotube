@@ -1,6 +1,6 @@
 export function PlaylistIcon() {
     return <svg
-        className="w-16 h-16 mx-auto text-gray-600 mb-4"
+        className="w-16 h-16 mx-auto text-muted-foreground/40 mb-4"
         fill="none"
         stroke="currentColor"
         viewBox="0 0 24 24"

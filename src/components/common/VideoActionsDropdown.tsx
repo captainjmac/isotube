@@ -10,9 +10,9 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 export const statusColors: Record<VideoStatus, string> = {
-    unwatched: 'bg-gray-500',
-    in_progress: 'bg-yellow-500',
-    completed: 'bg-green-500',
+    unwatched: 'bg-status-unwatched',
+    in_progress: 'bg-status-progress',
+    completed: 'bg-status-completed',
 };
 
 export const statusLabels: Record<VideoStatus, string> = {
@@ -54,7 +54,7 @@ export function VideoActionsDropdown({
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()} onPointerDown={(e) => e.stopPropagation()}>
-                <button className="p-1 rounded hover:bg-gray-600 transition-colors flex-shrink-0">
+                <button className="p-1 rounded hover:bg-accent transition-colors flex-shrink-0">
                     <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                         <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"/>
                     </svg>
@@ -85,7 +85,7 @@ export function VideoActionsDropdown({
                     <DropdownMenuItem
                         key={status}
                         onClick={() => handleStatusChange(status)}
-                        className={video.status === status ? 'text-blue-400' : ''}
+                        className={video.status === status ? 'text-brand' : ''}
                     >
                         <span className={`w-2 h-2 rounded-full ${statusColors[status]}`}/>
                         {statusLabels[status]}

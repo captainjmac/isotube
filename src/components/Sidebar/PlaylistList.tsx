@@ -45,21 +45,21 @@ export function PlaylistList() {
 
       <button
         onClick={() => setIsExpanded(!isExpanded)}
-        className="w-full flex items-center justify-between px-3 py-2 rounded hover:bg-gray-700 transition-colors"
+        className="w-full flex items-center justify-between px-3 py-2 rounded hover:bg-accent transition-colors"
       >
         <div className="flex items-center gap-2 min-w-0">
-          <svg className="w-4 h-4 flex-shrink-0 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="w-4 h-4 flex-shrink-0 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 10h16M4 14h16M4 18h7"/>
           </svg>
           <span className="text-sm font-medium truncate">
             {activePlaylist?.name ?? 'Select Playlist'}
           </span>
           {activePlaylist && (
-            <span className="text-xs text-gray-400">({activePlaylist.videos.length})</span>
+            <span className="text-xs text-muted-foreground">({activePlaylist.videos.length})</span>
           )}
         </div>
         <svg
-          className={`w-4 h-4 text-gray-400 transition-transform ${isExpanded ? 'rotate-180' : ''}`}
+          className={`w-4 h-4 text-muted-foreground transition-transform ${isExpanded ? 'rotate-180' : ''}`}
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -70,9 +70,9 @@ export function PlaylistList() {
 
       {/* Expandable playlist list */}
       {isExpanded && (
-        <div className="mt-2 border-t border-gray-700 pt-2">
+        <div className="mt-2 border-t border-border pt-2">
           <div className="flex items-center justify-between px-2 py-1 mb-2">
-            <span className="text-xs font-semibold text-gray-400 uppercase tracking-wide">
+            <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
               Playlists
             </span>
             <button
@@ -80,7 +80,7 @@ export function PlaylistList() {
                 e.stopPropagation();
                 setIsCreating(true);
               }}
-              className="text-gray-400 hover:text-white transition-colors"
+              className="text-muted-foreground hover:text-foreground transition-colors"
               title="New playlist"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -103,14 +103,14 @@ export function PlaylistList() {
                   }
                 }}
                 placeholder="Playlist name..."
-                className="w-full px-3 py-2 bg-gray-700 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 bg-muted rounded text-sm focus:outline-none focus:ring-2 focus:ring-ring"
                 autoFocus
               />
               <div className="flex gap-2 mt-2">
                 <button
                   onClick={handleCreate}
                   disabled={!newPlaylistName.trim()}
-                  className="flex-1 px-3 py-1 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed rounded text-sm transition-colors"
+                  className="flex-1 px-3 py-1 bg-brand text-brand-foreground hover:bg-brand-strong disabled:opacity-50 disabled:cursor-not-allowed rounded-lg text-sm transition-colors"
                 >
                   Create
                 </button>
@@ -119,7 +119,7 @@ export function PlaylistList() {
                     setIsCreating(false);
                     setNewPlaylistName('');
                   }}
-                  className="px-3 py-1 bg-gray-600 hover:bg-gray-500 rounded text-sm transition-colors"
+                  className="px-3 py-1 bg-secondary hover:bg-accent rounded text-sm transition-colors"
                 >
                   Cancel
                 </button>
@@ -129,12 +129,12 @@ export function PlaylistList() {
 
           {/* Playlist list */}
           {userPlaylists.length === 0 && !isCreating ? (
-            <p className="text-gray-500 text-sm px-2 py-4 text-center">
+            <p className="text-muted-foreground/70 text-sm px-2 py-4 text-center">
               No playlists yet.
               <br/>
               <button
                 onClick={() => setIsCreating(true)}
-                className="text-blue-400 hover:text-blue-300 mt-1"
+                className="text-brand hover:opacity-80 mt-1"
               >
                 Create one
               </button>

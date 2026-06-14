@@ -15,14 +15,14 @@ export function SidebarTabs({
   watchLaterCount,
 }: SidebarTabsProps) {
   return (
-    <div className="flex border-b border-gray-700">
+    <div className="flex border-b border-border">
       <button
         onClick={() => onTabChange('watch-later')}
         className={cn(
           'flex-1 px-2 py-2 text-sm font-medium transition-colors',
           activeTab === 'watch-later'
-            ? 'border-b-2 border-blue-500 text-blue-400'
-            : 'text-gray-400 hover:text-white'
+            ? 'border-b-2 border-brand text-brand'
+            : 'text-muted-foreground hover:text-foreground'
         )}
       >
         Watch Later ({watchLaterCount})
@@ -32,8 +32,8 @@ export function SidebarTabs({
         className={cn(
           'flex-1 px-2 py-2 text-sm font-medium transition-colors',
           activeTab === 'playlists'
-            ? 'border-b-2 border-blue-500 text-blue-400'
-            : 'text-gray-400 hover:text-white'
+            ? 'border-b-2 border-brand text-brand'
+            : 'text-muted-foreground hover:text-foreground'
         )}
       >
         Playlists
@@ -43,8 +43,8 @@ export function SidebarTabs({
         className={cn(
           'flex-1 px-2 py-2 text-sm font-medium transition-colors',
           activeTab === 'subscriptions'
-            ? 'border-b-2 border-blue-500 text-blue-400'
-            : 'text-gray-400 hover:text-white'
+            ? 'border-b-2 border-brand text-brand'
+            : 'text-muted-foreground hover:text-foreground'
         )}
       >
         Channels

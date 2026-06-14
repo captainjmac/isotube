@@ -8,9 +8,9 @@ interface VideoDetailProps {
 }
 
 const statusOptions: { value: VideoStatus; label: string; color: string }[] = [
-  { value: 'unwatched', label: 'Unwatched', color: 'bg-gray-500' },
-  { value: 'in_progress', label: 'In Progress', color: 'bg-yellow-500' },
-  { value: 'completed', label: 'Completed', color: 'bg-green-500' },
+  { value: 'unwatched', label: 'Unwatched', color: 'bg-status-unwatched' },
+  { value: 'in_progress', label: 'In Progress', color: 'bg-status-progress' },
+  { value: 'completed', label: 'Completed', color: 'bg-status-completed' },
 ];
 
 export function VideoDetail({ video, onUpdate }: VideoDetailProps) {
@@ -55,7 +55,7 @@ export function VideoDetail({ video, onUpdate }: VideoDetailProps) {
     <div className="flex-1 overflow-auto p-4 space-y-6">
       {/* Rating */}
       <div>
-        <label className="block text-sm font-medium text-gray-400 mb-2">
+        <label className="block text-sm font-medium text-muted-foreground mb-2">
           Rating
         </label>
         <StarRating
@@ -67,7 +67,7 @@ export function VideoDetail({ video, onUpdate }: VideoDetailProps) {
 
       {/* Status */}
       <div>
-        <label className="block text-sm font-medium text-gray-400 mb-2">
+        <label className="block text-sm font-medium text-muted-foreground mb-2">
           Status
         </label>
         <div className="flex gap-2">
@@ -77,8 +77,8 @@ export function VideoDetail({ video, onUpdate }: VideoDetailProps) {
               onClick={() => handleStatusChange(option.value)}
               className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors ${
                 video.status === option.value
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                  ? 'bg-brand text-brand-foreground'
+                  : 'bg-secondary text-foreground/80 hover:bg-accent'
               }`}
             >
               <span className={`w-2 h-2 rounded-full ${option.color}`} />
@@ -91,11 +91,11 @@ export function VideoDetail({ video, onUpdate }: VideoDetailProps) {
       {/* Notes */}
       <div>
         <div className="flex items-center justify-between mb-2">
-          <label className="block text-sm font-medium text-gray-400">
+          <label className="block text-sm font-medium text-muted-foreground">
             Notes
           </label>
           {isSaving && (
-            <span className="text-xs text-gray-500">Saving...</span>
+            <span className="text-xs text-muted-foreground/70">Saving...</span>
           )}
         </div>
         <textarea
@@ -103,12 +103,12 @@ export function VideoDetail({ video, onUpdate }: VideoDetailProps) {
           onChange={(e) => setNotes(e.target.value)}
           placeholder="Add your notes here..."
           rows={6}
-          className="w-full px-3 py-2 bg-gray-700 rounded-lg text-sm resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full px-3 py-2 bg-muted rounded-lg text-sm resize-none focus:outline-none focus:ring-2 focus:ring-ring"
         />
       </div>
 
       {/* Metadata */}
-      <div className="text-xs text-gray-500 space-y-1">
+      <div className="text-xs text-muted-foreground/70 space-y-1">
         <p>Added: {new Date(video.addedAt).toLocaleDateString()}</p>
         {video.progress > 0 && (
           <p>Last position: {Math.floor(video.progress / 60)}:{String(Math.floor(video.progress % 60)).padStart(2, '0')}</p>

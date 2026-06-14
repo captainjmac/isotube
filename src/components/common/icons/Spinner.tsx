@@ -1,5 +1,5 @@
 export function Spinner() {
-    return <svg className="w-10 h-10 animate-spin text-gray-400" fill="none" viewBox="0 0 24 24">
+    return <svg className="w-10 h-10 animate-spin text-brand" fill="none" viewBox="0 0 24 24">
         <circle
             className="opacity-25"
             cx="12"

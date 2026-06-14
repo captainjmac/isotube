@@ -30,7 +30,7 @@ export function StarRating({ rating, onChange, size = 'md' }: StarRatingProps) {
         >
           <svg
             className={`${sizeClasses[size]} ${
-              star <= displayRating ? 'text-yellow-400' : 'text-gray-600'
+              star <= displayRating ? 'text-rating' : 'text-muted-foreground/40'
             } transition-colors`}
             fill="currentColor"
             viewBox="0 0 24 24"

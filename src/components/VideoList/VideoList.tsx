@@ -82,7 +82,7 @@ export function VideoList({}: VideoListProps) {
       <div className="flex-1 flex items-center justify-center p-4">
         <div className="text-center">
           <PlaylistIcon/>
-          <p className="text-gray-400 mb-2">{message}</p>
+          <p className="text-muted-foreground mb-2">{message}</p>
         </div>
       </div>
     );
@@ -96,7 +96,7 @@ export function VideoList({}: VideoListProps) {
     <div className="flex-1 flex flex-col overflow-hidden">
 
       {playlist.videos.length > 0 && (
-        <div className="px-4 py-3 border-b border-gray-700 grid grid-cols-2 gap-4">
+        <div className="px-4 py-3 border-b border-border grid grid-cols-2 gap-4">
           <VideoFilterSelector
             value={filterStatus}
             onChange={(e: any) => setFilterStatus(e.target.value as FilterStatus)}
@@ -115,12 +115,12 @@ export function VideoList({}: VideoListProps) {
         {playlist.videos.length === 0 ? (
           <div className="text-center py-12">
             <EmptyVideoListIcon/>
-            <p className="text-gray-400 mb-2">No videos in this playlist</p>
-            <p className="text-gray-500 text-sm">Paste a YouTube URL above to add your first video</p>
+            <p className="text-muted-foreground mb-2">No videos in this playlist</p>
+            <p className="text-muted-foreground/70 text-sm">Paste a YouTube URL above to add your first video</p>
           </div>
         ) : filteredVideos.length === 0 ? (
           <div className="text-center py-12">
-            <p className="text-gray-400">No videos match this filter</p>
+            <p className="text-muted-foreground">No videos match this filter</p>
           </div>
         ) : (
           <div className="grid gap-2 min-w-0">

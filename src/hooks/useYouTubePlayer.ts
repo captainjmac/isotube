@@ -114,9 +114,9 @@ interface UseYouTubePlayerOptions {
   videoId: string | null;
   startTime?: number;
   autoplay?: boolean;
-  onProgress?: (seconds: number) => void;
+  onProgress?: (seconds: number, duration: number) => void;
   onEnded?: () => void;
-  onPause?: (seconds: number) => void;
+  onPause?: (seconds: number, duration: number) => void;
 }
 
 export function useYouTubePlayer({
@@ -222,7 +222,7 @@ export function useYouTubePlayer({
                   const now = Date.now();
                   if (now - lastProgressSaveRef.current >= 30_000) {
                     lastProgressSaveRef.current = now;
-                    callbacksRef.current.onProgress?.(time);
+                    callbacksRef.current.onProgress?.(time, playerRef.current.getDuration());
                   }
                 }
               }, 1000);
@@ -235,7 +235,7 @@ export function useYouTubePlayer({
               }
               const time = event.target.getCurrentTime();
               setCurrentTime(time);
-              callbacksRef.current.onPause?.(time);
+              callbacksRef.current.onPause?.(time, event.target.getDuration());
             } else if (state === 0) {
               // Ended
               setIsPlaying(false);
@@ -267,7 +267,7 @@ export function useYouTubePlayer({
         if (player) {
           const time = player.getCurrentTime();
           if (time > 0) {
-            onProgressAtMount?.(time);
+            onProgressAtMount?.(time, player.getDuration());
           }
         }
       } catch {

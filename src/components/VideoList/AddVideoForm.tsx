@@ -215,11 +215,11 @@ export function AddVideoForm({
               onPaste={handlePaste}
               placeholder="Paste YouTube URL, playlist, or channel..."
               disabled={isLoading}
-              className="w-full px-4 py-2 pr-10 bg-gray-700 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
+              className="w-full px-4 py-2 pr-10 bg-muted rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-ring disabled:opacity-50"
             />
             {isLoading && (
               <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                <svg className="w-5 h-5 animate-spin text-gray-400" fill="none" viewBox="0 0 24 24">
+                <svg className="w-5 h-5 animate-spin text-muted-foreground" fill="none" viewBox="0 0 24 24">
                   <circle
                     className="opacity-25"
                     cx="12"
@@ -240,7 +240,7 @@ export function AddVideoForm({
           <button
             type="submit"
             disabled={isLoading || !url.trim()}
-            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg text-sm font-medium transition-colors"
+            className="px-4 py-2 bg-brand text-brand-foreground hover:bg-brand-strong disabled:opacity-50 disabled:cursor-not-allowed rounded-lg text-sm font-medium transition-colors shadow-[0_2px_12px_-3px_var(--glow)]"
           >
             Add
           </button>

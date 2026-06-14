@@ -18,7 +18,7 @@ function ReadOnlyStars({rating}: { rating: number }) {
       {[1, 2, 3, 4, 5].map((star) => (
         <span
           key={star}
-          className={star <= rating ? 'text-yellow-400' : 'text-gray-600'}
+          className={star <= rating ? 'text-rating' : 'text-muted-foreground/40'}
         >
           <StarIcon className="w-4 h-4" />
         </span>
@@ -56,7 +56,7 @@ export function VideoDetailSummary({video, onUpdate, onDelete}: VideoDetailSumma
   return (
     <div className="p-4 space-y-4 text-sm overflow-y-auto min-h-0">
       {/* Meta row: upload date, rating, and actions */}
-      <div className="flex flex-wrap items-center gap-4 text-gray-400">
+      <div className="flex flex-wrap items-center gap-4 text-muted-foreground">
         {uploadDate && (
           <div className="flex items-center gap-1.5">
             <CalendarIcon className="w-4 h-4" />
@@ -81,26 +81,26 @@ export function VideoDetailSummary({video, onUpdate, onDelete}: VideoDetailSumma
 
       {/* User notes */}
       {hasNotes && (
-        <div className="rounded-lg bg-gray-800/50 border border-gray-700 p-3">
-          <div className="flex items-center gap-1.5 text-xs font-medium text-gray-400 mb-2">
+        <div className="rounded-lg bg-card/50 border border-border p-3">
+          <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground mb-2">
             <NotesIcon className="w-3.5 h-3.5" />
             <span>Your Notes</span>
           </div>
-          <p className="text-gray-300 whitespace-pre-wrap">{video.notes}</p>
+          <p className="text-foreground/80 whitespace-pre-wrap">{video.notes}</p>
         </div>
       )}
 
       {/* Video description */}
       {isLoading && (
-        <p className="text-gray-500 italic">Loading description...</p>
+        <p className="text-muted-foreground/70 italic">Loading description...</p>
       )}
       {!isLoading && hasDescription && (
         <div>
-          <div className="flex items-center gap-1.5 text-xs font-medium text-gray-400 mb-2">
+          <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground mb-2">
             <DescriptionIcon className="w-3.5 h-3.5" />
             <span>Description</span>
           </div>
-          <p className="text-gray-400 whitespace-pre-wrap leading-relaxed">
+          <p className="text-muted-foreground whitespace-pre-wrap leading-relaxed">
             {description}
           </p>
         </div>
@@ -108,7 +108,7 @@ export function VideoDetailSummary({video, onUpdate, onDelete}: VideoDetailSumma
 
       {/* Empty state */}
       {!isLoading && !uploadDate && !hasRating && !hasNotes && !hasDescription && (
-        <p className="text-gray-500 italic">No additional details available.</p>
+        <p className="text-muted-foreground/70 italic">No additional details available.</p>
       )}
     </div>
   );

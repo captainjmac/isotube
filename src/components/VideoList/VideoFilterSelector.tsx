@@ -19,12 +19,12 @@ export function VideoFilterSelector({value, onChange, videos}: VideoFilterSelect
 
   return (
     <div className="flex items-center gap-2">
-      <span className="text-sm text-gray-400 shrink-0">Filter:</span>
+      <span className="text-sm text-muted-foreground shrink-0">Filter:</span>
       <div className="relative flex-1">
         <select
           value={value}
           onChange={onChange}
-          className="appearance-none w-full bg-gray-700 text-sm rounded pl-2 pr-7 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
+          className="appearance-none w-full bg-muted text-sm rounded pl-2 pr-7 py-1 focus:outline-none focus:ring-2 focus:ring-ring cursor-pointer"
         >
           <option value="all">All ({counts.all})</option>
           <option value="starred">Starred ({counts.starred})</option>
@@ -33,7 +33,7 @@ export function VideoFilterSelector({value, onChange, videos}: VideoFilterSelect
           <option value="completed">Completed ({counts.completed})</option>
         </select>
         <svg
-          className="absolute right-2 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none"
+          className="absolute right-2 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"

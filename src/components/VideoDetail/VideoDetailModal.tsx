@@ -23,10 +23,10 @@ export function VideoDetailModal(
       />
 
       {/* Panel */}
-      <div className="relative bg-gray-800 rounded-lg shadow-xl w-full max-w-lg max-h-[90vh] overflow-hidden flex flex-col">
+      <div className="relative bg-card rounded-lg shadow-xl w-full max-w-lg max-h-[90vh] overflow-hidden flex flex-col">
 
         {/* Header */}
-        <div className="flex items-start gap-4 p-4 border-b border-gray-700">
+        <div className="flex items-start gap-4 p-4 border-b border-border">
           <img
             src={video.thumbnail}
             alt={video.title}
@@ -38,14 +38,14 @@ export function VideoDetailModal(
               href={video.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-sm text-blue-400 hover:text-blue-300 mt-1 inline-block"
+              className="text-sm text-brand hover:opacity-80 mt-1 inline-block"
             >
               Open on YouTube
             </a>
           </div>
           <button
             onClick={onClose}
-            className="p-1 rounded hover:bg-gray-700 transition-colors flex-shrink-0"
+            className="p-1 rounded hover:bg-accent transition-colors flex-shrink-0"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />

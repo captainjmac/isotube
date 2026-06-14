@@ -51,15 +51,15 @@ export function ChannelSubscribeDialog({
               onError={() => setThumbnailError(true)}
             />
           ) : (
-            <div className="w-16 h-16 rounded-full bg-gray-700 flex items-center justify-center shrink-0">
-              <ChannelIcon className="w-8 h-8 text-gray-400"/>
+            <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center shrink-0">
+              <ChannelIcon className="w-8 h-8 text-muted-foreground"/>
             </div>
           )}
 
           {/* Channel info */}
           <div className="flex-1 min-w-0">
             <h3 className="font-semibold text-lg truncate">{metadata.title}</h3>
-            <p className="text-sm text-gray-400 mt-1">
+            <p className="text-sm text-muted-foreground mt-1">
               {videos.length} recent video{videos.length !== 1 ? 's' : ''} will be added
             </p>
           </div>
@@ -67,8 +67,8 @@ export function ChannelSubscribeDialog({
 
         {/* Video preview */}
         {videos.length > 0 && (
-          <div className="border-t border-gray-700 pt-4 overflow-hidden">
-            <p className="text-xs text-gray-400 mb-2 uppercase font-semibold">Recent videos</p>
+          <div className="border-t border-border pt-4 overflow-hidden">
+            <p className="text-xs text-muted-foreground mb-2 uppercase font-semibold tracking-wide">Recent videos</p>
             <div className="space-y-2 max-h-32 overflow-y-auto overflow-x-hidden">
               {videos.slice(0, 3).map((video) => (
                 <div key={video.id} className="flex items-center gap-2 min-w-0">
@@ -81,7 +81,7 @@ export function ChannelSubscribeDialog({
                 </div>
               ))}
               {videos.length > 3 && (
-                <p className="text-xs text-gray-500">
+                <p className="text-xs text-muted-foreground/70">
                   +{videos.length - 3} more videos
                 </p>
               )}
@@ -92,13 +92,13 @@ export function ChannelSubscribeDialog({
         <DialogFooter>
           <button
             onClick={() => onOpenChange(false)}
-            className="px-4 py-2 rounded-lg text-sm bg-gray-700 hover:bg-gray-600 transition-colors"
+            className="px-4 py-2 rounded-lg text-sm bg-secondary hover:bg-accent transition-colors"
           >
             Cancel
           </button>
           <button
             onClick={handleSubscribe}
-            className="px-4 py-2 rounded-lg text-sm font-medium bg-blue-600 hover:bg-blue-700 transition-colors"
+            className="px-4 py-2 rounded-lg text-sm font-medium bg-brand text-brand-foreground hover:bg-brand-strong transition-colors shadow-[0_2px_12px_-3px_var(--glow)]"
           >
             Subscribe
           </button>

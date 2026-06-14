@@ -15,7 +15,7 @@ interface PlayerProps {
   video: Video | null;
   autoAdvance: boolean;
   onToggleAutoAdvance: () => void;
-  onProgress: (seconds: number) => void;
+  onProgress: (seconds: number, duration: number) => void;
   onEnded: () => void;
   hasNext: boolean;
   hasPrevious: boolean;
@@ -115,12 +115,13 @@ export const Player = forwardRef<PlayerHandle, PlayerProps>(function Player({
 
   if (!video) {
     return (
-      <div className="bg-black aspect-video max-h-[50vh] flex items-center justify-center">
-        <div className="text-center px-4">
+      <div className="relative bg-background aspect-video max-h-[50vh] flex items-center justify-center overflow-hidden">
+        <div className="aurora" aria-hidden="true"/>
+        <div className="text-center px-4 relative z-10">
           <NoVideoIcon/>
-          <p className="text-gray-500">Select a video to play</p>
-          <p className="text-gray-600 text-xs mt-2">
-            Keyboard: Space to play/pause, N for next, P for previous
+          <p className="text-muted-foreground">Select a video to play</p>
+          <p className="text-muted-foreground/60 text-xs mt-2 font-mono">
+            Space play/pause · N next · P previous
           </p>
         </div>
       </div>
@@ -133,20 +134,20 @@ export const Player = forwardRef<PlayerHandle, PlayerProps>(function Player({
       <div className={`aspect-video relative ${isFullscreen ? 'flex-1 max-h-none' : 'max-h-[65vh]'}`}>
         <div ref={containerRef} className="w-full h-full"/>
         {!isReady && (
-          <div className="absolute inset-0 flex items-center justify-center bg-gray-900">
+          <div className="absolute inset-0 flex items-center justify-center bg-background">
             <Spinner/>
           </div>
         )}
       </div>
 
       {/* Controls bar */}
-      <div className="bg-gray-800 px-2 sm:px-4 py-2 flex items-center gap-2 sm:gap-4">
+      <div className="glass border-t border-border px-2 sm:px-4 py-2 flex items-center gap-2 sm:gap-4">
         {/* Play/Pause and navigation */}
         <div className="flex items-center gap-1 sm:gap-2">
           <button
             onClick={onPrevious}
             disabled={!hasPrevious}
-            className="p-1.5 sm:p-2 rounded hover:bg-gray-700 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+            className="p-1.5 sm:p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-accent disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
             title="Previous video (P)"
           >
             <PreviousIcon/>
@@ -154,7 +155,7 @@ export const Player = forwardRef<PlayerHandle, PlayerProps>(function Player({
 
           <button
             onClick={togglePlay}
-            className="p-1.5 sm:p-2 rounded hover:bg-gray-700 transition-colors"
+            className="p-1.5 sm:p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
             title={isPlaying ? 'Pause (Space)' : 'Play (Space)'}
           >
             {isPlaying ? (
@@ -167,7 +168,7 @@ export const Player = forwardRef<PlayerHandle, PlayerProps>(function Player({
           <button
             onClick={onNext}
             disabled={!hasNext}
-            className="p-1.5 sm:p-2 rounded hover:bg-gray-700 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+            className="p-1.5 sm:p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-accent disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
             title="Next video (N)"
           >
             <NextIcon/>
@@ -176,11 +177,11 @@ export const Player = forwardRef<PlayerHandle, PlayerProps>(function Player({
 
         {/* Progress bar */}
         <div className="flex-1 flex items-center gap-2 sm:gap-3">
-                    <span className="text-xs text-gray-400 w-8 sm:w-10 text-right hidden sm:block">
+                    <span className="text-xs font-mono tabular-nums text-muted-foreground w-9 sm:w-11 text-right hidden sm:block">
                         {formatTime(currentTime)}
                     </span>
           <div
-            className="flex-1 h-2 bg-gray-600 rounded-full overflow-hidden cursor-pointer hover:h-3 transition-all"
+            className="group/bar flex-1 h-2 bg-muted rounded-full overflow-hidden cursor-pointer hover:h-3 transition-all"
             onClick={(e) => {
               if (!duration) return;
               const rect = e.currentTarget.getBoundingClientRect();
@@ -191,11 +192,11 @@ export const Player = forwardRef<PlayerHandle, PlayerProps>(function Player({
             }}
           >
             <div
-              className="h-full bg-blue-500 pointer-events-none"
+              className="h-full bg-gradient-to-r from-brand to-brand-2 pointer-events-none shadow-[0_0_10px_-1px_var(--glow)]"
               style={{width: duration ? `${(currentTime / duration) * 100}%` : '0%'}}
             />
           </div>
-          <span className="text-xs text-gray-400 w-8 sm:w-10 hidden sm:block">
+          <span className="text-xs font-mono tabular-nums text-muted-foreground w-9 sm:w-11 hidden sm:block">
                         {formatTime(duration)}
                     </span>
         </div>
@@ -204,7 +205,7 @@ export const Player = forwardRef<PlayerHandle, PlayerProps>(function Player({
         <div className="group relative flex items-center">
           <button
             onClick={toggleMute}
-            className="p-1.5 sm:p-2 rounded hover:bg-gray-700 transition-colors"
+            className="p-1.5 sm:p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
             title={isMuted ? 'Unmute' : 'Mute'}
           >
             {isMuted || volume === 0 ? (
@@ -222,7 +223,7 @@ export const Player = forwardRef<PlayerHandle, PlayerProps>(function Player({
               max={100}
               value={isMuted ? 0 : volume}
               onChange={(e) => setVolume(Number(e.target.value))}
-              className="w-20 h-1 accent-blue-500 cursor-pointer"
+              className="w-20 h-1 accent-brand cursor-pointer"
               title={`Volume: ${isMuted ? 0 : volume}%`}
             />
           </div>
@@ -231,10 +232,10 @@ export const Player = forwardRef<PlayerHandle, PlayerProps>(function Player({
         {/* Auto-advance toggle */}
         <button
           onClick={onToggleAutoAdvance}
-          className={`flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-1.5 rounded text-xs sm:text-sm transition-colors ${
+          className={`flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-1.5 rounded-lg text-xs sm:text-sm transition-colors ${
             autoAdvance
-              ? 'bg-blue-600 text-white'
-              : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+              ? 'bg-brand text-brand-foreground shadow-[0_2px_12px_-3px_var(--glow)]'
+              : 'bg-secondary text-foreground/80 hover:bg-accent'
           }`}
           title={autoAdvance ? 'Auto-advance is on' : 'Auto-advance is off'}
         >
@@ -245,7 +246,7 @@ export const Player = forwardRef<PlayerHandle, PlayerProps>(function Player({
         {/* Fullscreen toggle */}
         <button
           onClick={toggleFullscreen}
-          className="p-1.5 sm:p-2 rounded hover:bg-gray-700 transition-colors"
+          className="p-1.5 sm:p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
           title={isFullscreen ? 'Exit fullscreen (F)' : 'Fullscreen (F)'}
         >
           {isFullscreen ? <FullscreenExitIcon/> : <FullscreenEnterIcon/>}
@@ -253,8 +254,8 @@ export const Player = forwardRef<PlayerHandle, PlayerProps>(function Player({
       </div>
 
       {/* Video title */}
-      <div className="bg-gray-800 border-t border-gray-700 px-3 sm:px-4 py-2">
-        <h3 className="font-medium text-sm truncate" title={video.title}>
+      <div className="glass border-t border-border px-3 sm:px-4 py-2">
+        <h3 className="font-display font-semibold text-sm truncate" title={video.title}>
           {video.title}
         </h3>
       </div>

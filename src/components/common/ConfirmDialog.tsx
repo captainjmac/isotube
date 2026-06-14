@@ -40,14 +40,14 @@ export function ConfirmDialog({
             <div className="absolute inset-0 bg-black/70" onClick={onCancel}/>
 
             {/* Dialog */}
-            <div className="relative bg-gray-800 rounded-lg shadow-xl w-full max-w-sm p-6">
-                <h3 className="text-lg font-semibold mb-2">{title}</h3>
-                <p className="text-gray-400 text-sm mb-6">{message}</p>
+            <div className="relative glass border border-border rounded-2xl shadow-2xl shadow-[0_24px_64px_-24px_var(--glow)] w-full max-w-sm p-6">
+                <h3 className="text-lg font-display font-semibold mb-2">{title}</h3>
+                <p className="text-muted-foreground text-sm mb-6">{message}</p>
 
                 <div className="flex gap-3 justify-end">
                     <button
                         onClick={onCancel}
-                        className="px-4 py-2 rounded-lg text-sm bg-gray-700 hover:bg-gray-600 transition-colors"
+                        className="px-4 py-2 rounded-lg text-sm bg-secondary hover:bg-accent transition-colors"
                     >
                         {cancelLabel}
                     </button>
@@ -56,8 +56,8 @@ export function ConfirmDialog({
                         onClick={onConfirm}
                         className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                             variant === 'danger'
-                                ? 'bg-red-600 hover:bg-red-700'
-                                : 'bg-blue-600 hover:bg-blue-700'
+                                ? 'bg-destructive text-white hover:bg-destructive/90'
+                                : 'bg-brand text-brand-foreground hover:bg-brand-strong'
                         }`}
                     >
                         {confirmLabel}

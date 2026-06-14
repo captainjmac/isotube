@@ -68,7 +68,7 @@ export function PlaylistImportDialog({
 
         {isImporting ? (
           <div className="flex flex-col items-center gap-4 py-8">
-            <svg className="w-8 h-8 animate-spin text-blue-500" fill="none" viewBox="0 0 24 24">
+            <svg className="w-8 h-8 animate-spin text-brand" fill="none" viewBox="0 0 24 24">
               <circle
                 className="opacity-25"
                 cx="12"
@@ -83,7 +83,7 @@ export function PlaylistImportDialog({
                 d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
               />
             </svg>
-            <p className="text-sm text-gray-400">
+            <p className="text-sm text-muted-foreground">
               Importing {videoCount} videos...
             </p>
           </div>
@@ -107,7 +107,7 @@ export function PlaylistImportDialog({
                       value={newPlaylistName}
                       onChange={(e) => setNewPlaylistName(e.target.value)}
                       placeholder="Playlist name"
-                      className="mt-2 w-full px-3 py-2 bg-gray-700 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="mt-2 w-full px-3 py-2 bg-muted rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-ring"
                     />
                   )}
                 </div>
@@ -129,7 +129,7 @@ export function PlaylistImportDialog({
                       <select
                         value={selectedPlaylistId}
                         onChange={(e) => setSelectedPlaylistId(e.target.value)}
-                        className="mt-2 w-full px-3 py-2 bg-gray-700 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="mt-2 w-full px-3 py-2 bg-muted rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-ring"
                       >
                         {existingPlaylists.map(playlist => (
                           <option key={playlist.id} value={playlist.id}>
@@ -146,14 +146,14 @@ export function PlaylistImportDialog({
             <DialogFooter>
               <button
                 onClick={() => onOpenChange(false)}
-                className="px-4 py-2 rounded-lg text-sm bg-gray-700 hover:bg-gray-600 transition-colors"
+                className="px-4 py-2 rounded-lg text-sm bg-secondary hover:bg-accent transition-colors"
               >
                 Cancel
               </button>
               <button
                 onClick={handleImport}
                 disabled={mode === 'new' && !newPlaylistName.trim()}
-                className="px-4 py-2 rounded-lg text-sm font-medium bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="px-4 py-2 rounded-lg text-sm font-medium bg-brand text-brand-foreground hover:bg-brand-strong disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-[0_2px_12px_-3px_var(--glow)]"
               >
                 Import {videoCount} Videos
               </button>

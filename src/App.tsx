@@ -11,6 +11,7 @@ import {SubscriptionList} from "./components/Sidebar/SubscriptionList.tsx";
 import {SidebarTabs} from "./components/Sidebar/SidebarTabs.tsx";
 import {Logo} from "./components/common/icons/Logo.tsx";
 import {HeaderMenu} from "@/components/Header/HeaderMenu.tsx";
+import {ThemeToggle} from "@/components/Header/ThemeToggle.tsx";
 import {VideoDetailSummary} from "@/components/VideoDetail/VideoDetailSummary.tsx";
 import {HelpDialog} from "@/components/Header/HelpDialog.tsx";
 
@@ -49,9 +50,9 @@ function App() {
   const hasPrevious = currentIndex > 0;
 
   // Handle progress updates (track on the playlist the video was started from)
-  const handleProgress = useCallback((seconds: number) => {
+  const handleProgress = useCallback((seconds: number, duration: number) => {
     if (currentVideoPlaylistId && currentVideoId) {
-      setVideoProgress(currentVideoPlaylistId, currentVideoId, seconds);
+      setVideoProgress(currentVideoPlaylistId, currentVideoId, seconds, duration);
     }
   }, [currentVideoPlaylistId, currentVideoId, setVideoProgress]);
 
@@ -84,13 +85,17 @@ function App() {
 
   return (
     <div
-      className="h-screen bg-gray-900 text-white grid grid-cols-1 grid-rows-[auto_1fr_auto] lg:grid-cols-[24rem_1fr] lg:grid-rows-[auto_1fr]">
+      className="relative isolate h-screen overflow-hidden bg-background text-foreground grid grid-cols-1 grid-rows-[auto_1fr_auto] lg:grid-cols-[24rem_1fr] lg:grid-rows-[auto_1fr]">
+      {/* Ambient violet → magenta aurora behind everything */}
+      <div className="aurora" aria-hidden="true"/>
+
       {/* Header - spans full width */}
-      <header className="col-span-full flex items-center gap-3 px-4 py-3 bg-gray-800 border-b border-gray-700">
+      <header
+        className="col-span-full relative z-10 flex items-center gap-3 px-4 py-3 glass border-b border-border reveal reveal-1">
         <Logo/>
-        <h1 className="text-xl font-bold tracking-tight text-white">
-          Iso-Tube
-          <small className="hidden sm:inline text-xs font-normal text-purple-400 px-4">
+        <h1 className="text-xl font-display font-bold tracking-tight leading-none">
+          <span className="brand-text">Iso-Tube</span>
+          <small className="hidden sm:inline text-xs font-sans font-normal text-muted-foreground px-4 tracking-normal">
             Watch YouTube videos without the distraction
           </small>
         </h1>
@@ -108,12 +113,13 @@ function App() {
         )}
         <div className="ml-auto flex items-center gap-1">
           <HelpDialog/>
+          <ThemeToggle/>
           <HeaderMenu/>
         </div>
       </header>
 
       {/* Left column: Playlists + Videos stacked (desktop only) */}
-      <Sidebar className="hidden lg:flex">
+      <Sidebar className="hidden lg:flex relative z-10 reveal reveal-2">
         <SidebarTabs
           activeTab={sidebarView}
           onTabChange={setSidebarView}
@@ -127,9 +133,9 @@ function App() {
       </Sidebar>
 
       {/* Video list - below player on mobile only */}
-      <section className="lg:hidden row-start-3 bg-gray-800 overflow-y-auto">
+      <section className="lg:hidden row-start-3 relative z-10 bg-card/60 overflow-y-auto">
         {activePlaylist && (
-          <div className="p-4 border-b border-gray-700">
+          <div className="p-4 border-b border-border">
             <AddVideoForm
               onAddVideo={(video) => addVideo(activePlaylist.id, video)}
               onAddVideos={addVideos}
@@ -153,7 +159,7 @@ function App() {
       </section>
 
       {/* Player - main content area */}
-      <main className="row-start-2 lg:col-start-2 flex flex-col min-w-0 min-h-0">
+      <main className="row-start-2 lg:col-start-2 relative z-10 flex flex-col min-w-0 min-h-0 reveal reveal-3">
         <Player
           ref={playerRef}
           video={currentVideo}

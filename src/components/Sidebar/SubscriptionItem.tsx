@@ -97,8 +97,8 @@ export function SubscriptionItem({
       className={cn(
         'group flex items-center gap-2 px-3 py-2 rounded cursor-pointer transition-colors',
         isActive
-          ? 'bg-blue-600 text-white'
-          : 'hover:bg-gray-700 text-gray-300'
+          ? 'bg-brand text-brand-foreground'
+          : 'hover:bg-accent text-foreground/80'
       )}
       onClick={onSelect}
     >
@@ -118,21 +118,21 @@ export function SubscriptionItem({
         <span className="block truncate text-sm">{subscription.name}</span>
         <span className={cn(
           'text-xs',
-          isActive ? 'text-blue-200' : 'text-gray-500'
+          isActive ? 'text-brand-foreground/70' : 'text-muted-foreground/70'
         )}>
                     {formatLastRefreshed(subscription.lastRefreshed)}
                 </span>
       </div>
 
       {/* Video count */}
-      <span className="text-xs text-gray-400">{videoCount}</span>
+      <span className="text-xs text-muted-foreground">{videoCount}</span>
 
       {/* Menu button */}
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <button
             onClick={(e) => e.stopPropagation()}
-            className="p-1 rounded opacity-0 group-hover:opacity-100 hover:bg-gray-600 transition-opacity"
+            className="p-1 rounded opacity-0 group-hover:opacity-100 hover:bg-accent transition-opacity"
           >
             <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
               <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"/>

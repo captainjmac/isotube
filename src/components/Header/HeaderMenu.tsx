@@ -94,7 +94,7 @@ export function HeaderMenu() {
             />
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                    <button className="p-2 rounded hover:bg-gray-700 transition-colors">
+                    <button className="p-2 rounded hover:bg-accent transition-colors">
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16"/>
                         </svg>
@@ -136,7 +136,7 @@ export function HeaderMenu() {
                             Cloud Sync
                             <span
                                 className={`w-2 h-2 rounded-full ${
-                                    isConnected ? 'bg-green-500' : 'bg-gray-500'
+                                    isConnected ? 'bg-status-completed' : 'bg-status-unwatched'
                                 }`}
                             />
                         </span>

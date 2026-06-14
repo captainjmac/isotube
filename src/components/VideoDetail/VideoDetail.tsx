@@ -1,9 +1,13 @@
-import { useState, useEffect, useCallback } from 'react';
-import type { Video, VideoStatus } from '@/types';
+import { useState, useEffect, useCallback, useMemo } from 'react';
+import type { Tag, Video, VideoStatus } from '@/types';
 import { StarRating } from './StarRating';
+import { usePlaylistsContext } from '@/hooks/PlaylistsContext';
+import { TagPicker } from '@/components/Tags/TagPicker';
+import { TagBadge } from '@/components/Tags/TagBadge';
 
 interface VideoDetailProps {
   video: Video | null;
+  parentTagIds?: string[];
   onUpdate: (updates: Partial<Video>) => void;
 }
 
@@ -13,32 +17,21 @@ const statusOptions: { value: VideoStatus; label: string; color: string }[] = [
   { value: 'completed', label: 'Completed', color: 'bg-status-completed' },
 ];
 
-export function VideoDetail({ video, onUpdate }: VideoDetailProps) {
+export function VideoDetail({ video, parentTagIds = [], onUpdate }: VideoDetailProps) {
 
-  if (!video) {
-    return null;
-  }
-
-  const [notes, setNotes] = useState(video.notes);
+  const { tags, createTag } = usePlaylistsContext();
+  const [notes, setNotes] = useState(video?.notes ?? '');
   const [isSaving, setIsSaving] = useState(false);
 
-  // Update local notes when video changes
-  useEffect(() => {
-    setNotes(video.notes);
-  }, [video.id, video.notes]);
+  const tagsById = useMemo(() => {
+    const map = new Map<string, Tag>();
+    for (const t of tags) map.set(t.id, t);
+    return map;
+  }, [tags]);
 
-  // Auto-save notes with debounce
-  useEffect(() => {
-    if (notes === video.notes) return;
-
-    setIsSaving(true);
-    const timeout = setTimeout(() => {
-      onUpdate({ notes });
-      setIsSaving(false);
-    }, 500);
-
-    return () => clearTimeout(timeout);
-  }, [notes, video.notes, onUpdate]);
+  const setOwnTags = useCallback((ids: string[]) => {
+    onUpdate({ tags: ids.length ? ids : undefined });
+  }, [onUpdate]);
 
   const handleRatingChange = useCallback((rating: number) => {
     onUpdate({ rating });
@@ -47,6 +40,32 @@ export function VideoDetail({ video, onUpdate }: VideoDetailProps) {
   const handleStatusChange = useCallback((status: VideoStatus) => {
     onUpdate({ status });
   }, [onUpdate]);
+
+  // Update local notes when video changes
+  useEffect(() => {
+    setNotes(video?.notes ?? '');
+  }, [video?.id, video?.notes]);
+
+  // Auto-save notes with debounce
+  useEffect(() => {
+    if (!video || notes === video.notes) return;
+
+    setIsSaving(true);
+    const timeout = setTimeout(() => {
+      onUpdate({ notes });
+      setIsSaving(false);
+    }, 500);
+
+    return () => clearTimeout(timeout);
+  }, [notes, video, onUpdate]);
+
+  if (!video) {
+    return null;
+  }
+
+  const ownTagIds = video.tags ?? [];
+  const ownTags = ownTagIds.map((id) => tagsById.get(id)).filter((t): t is Tag => !!t);
+  const inheritedTags = parentTagIds.map((id) => tagsById.get(id)).filter((t): t is Tag => !!t);
 
   return (<>
 
@@ -63,6 +82,36 @@ export function VideoDetail({ video, onUpdate }: VideoDetailProps) {
           onChange={handleRatingChange}
           size="lg"
         />
+      </div>
+
+      {/* Tags */}
+      <div>
+        <label className="block text-sm font-medium text-muted-foreground mb-2">
+          Tags
+        </label>
+        <div className="flex flex-wrap items-center gap-2">
+          {ownTags.map((tag) => (
+            <TagBadge
+              key={tag.id}
+              tag={tag}
+              onRemove={() => setOwnTags(ownTagIds.filter((id) => id !== tag.id))}
+            />
+          ))}
+          <TagPicker
+            allTags={tags}
+            selectedTagIds={ownTagIds}
+            onChange={setOwnTags}
+            onCreateTag={createTag}
+          />
+        </div>
+        {ownTagIds.length === 0 && inheritedTags.length > 0 && (
+          <div className="mt-2 flex flex-wrap items-center gap-1.5">
+            <span className="text-xs text-muted-foreground/70">Inherited:</span>
+            {inheritedTags.map((tag) => (
+              <TagBadge key={tag.id} tag={tag} inherited/>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Status */}

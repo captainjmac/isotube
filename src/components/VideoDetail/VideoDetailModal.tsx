@@ -3,12 +3,13 @@ import {VideoDetail} from "@/components/VideoDetail/VideoDetail.tsx";
 
 interface VideoDetailModalProps {
   video: Video | null;
+  parentTagIds?: string[];
   onUpdate: (updates: Partial<Video>) => void;
   onClose: () => void;
 }
 
 export function VideoDetailModal(
-  { video, onUpdate, onClose }: VideoDetailModalProps
+  { video, parentTagIds, onUpdate, onClose }: VideoDetailModalProps
 ) {
   if (!video) {
     return null;
@@ -55,6 +56,7 @@ export function VideoDetailModal(
 
         <VideoDetail
           video={video}
+          parentTagIds={parentTagIds}
           onUpdate={onUpdate}
         />
 

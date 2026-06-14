@@ -6,6 +6,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import {usePlaylistsContext} from '@/hooks/PlaylistsContext';
+import {TagPicker} from '@/components/Tags/TagPicker';
 import {cn} from '@/lib/utils';
 
 export interface SubscriptionMenuProps {
@@ -79,6 +81,9 @@ export function SubscriptionItem({
   isFetchingAll,
   onDelete,
 }: SubscriptionItemProps) {
+  const {tags, createTag, setSubscriptionTags} = usePlaylistsContext();
+  const hasTags = (subscription.tags?.length ?? 0) > 0;
+
   const formatLastRefreshed = (timestamp: number | null) => {
     if (!timestamp) return 'Never';
     const diff = Date.now() - timestamp;
@@ -126,6 +131,29 @@ export function SubscriptionItem({
 
       {/* Video count */}
       <span className="text-xs text-muted-foreground">{videoCount}</span>
+
+      {/* Tag button */}
+      <TagPicker
+        allTags={tags}
+        selectedTagIds={subscription.tags ?? []}
+        onChange={(ids) => setSubscriptionTags(subscription.id, ids)}
+        onCreateTag={createTag}
+        align="end"
+      >
+        <button
+          onClick={(e) => e.stopPropagation()}
+          className={cn(
+            'p-1 rounded hover:bg-accent transition-opacity',
+            hasTags ? 'opacity-100' : 'opacity-0 group-hover:opacity-100',
+          )}
+          title="Edit tags"
+        >
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                  d="M7 7h.01M7 3h5a2 2 0 011.414.586l7 7a2 2 0 010 2.828l-5 5a2 2 0 01-2.828 0l-7-7A2 2 0 013 12V7a4 4 0 014-4z"/>
+          </svg>
+        </button>
+      </TagPicker>
 
       {/* Menu button */}
       <DropdownMenu>

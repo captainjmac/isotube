@@ -1,19 +1,24 @@
 import {memo, useState} from 'react';
-import type {Video} from '@/types';
+import type {Tag, Video} from '@/types';
 import {VideoActionsDropdown, statusColors, statusLabels} from '@/components/common/VideoActionsDropdown';
+import {TagBadge} from '@/components/Tags/TagBadge';
 
 interface VideoCardProps {
   video: Video;
   isPlaying: boolean;
+  tags?: Tag[];
   onShowDetail: () => void;
   onPlay: () => void;
   onUpdate: (updates: Partial<Video>) => void;
   onDelete: () => void;
 }
 
+const tagSignature = (tags?: Tag[]) => (tags ?? []).map(t => t.id).join(',');
+
 export const VideoCard = memo(function VideoCard({
   video,
   isPlaying,
+  tags,
   onShowDetail,
   onPlay,
   onUpdate,
@@ -149,6 +154,18 @@ export const VideoCard = memo(function VideoCard({
             </span>
           )}
         </div>
+
+        {/* Tags */}
+        {tags && tags.length > 0 && (
+          <div className="mt-1.5 flex flex-wrap gap-1">
+            {tags.slice(0, 3).map((tag) => (
+              <TagBadge key={tag.id} tag={tag} className="px-1.5 py-0"/>
+            ))}
+            {tags.length > 3 && (
+              <span className="text-xs text-muted-foreground self-center">+{tags.length - 3}</span>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Menu */}
@@ -161,4 +178,7 @@ export const VideoCard = memo(function VideoCard({
       />
     </div>
   );
-}, (prev, next) => prev.video === next.video && prev.isPlaying === next.isPlaying);
+}, (prev, next) =>
+  prev.video === next.video
+  && prev.isPlaying === next.isPlaying
+  && tagSignature(prev.tags) === tagSignature(next.tags));

@@ -1,5 +1,5 @@
 import {useMemo, useState} from 'react';
-import type {VideoStatus} from '@/types';
+import type {Playlist, Tag, Video, VideoStatus} from '@/types';
 import {VideoCard} from './VideoCard';
 import {VideoDetailModal} from '../VideoDetail/VideoDetailModal';
 import {usePlaylistsContext} from "../../hooks/PlaylistsContext.tsx";
@@ -14,6 +14,11 @@ type FilterStatus = 'all' | 'starred' | VideoStatus;
 interface VideoListProps {
 }
 
+interface Row {
+  video: Video;
+  playlistId: string;
+}
+
 const statusOrder: Record<VideoStatus, number> = {
   in_progress: 0,
   unwatched: 1,
@@ -24,11 +29,17 @@ export function VideoList({}: VideoListProps) {
 
   const {
     activePlaylist,
+    playlists,
     currentVideo,
     setCurrentVideo,
     updateVideo,
     deleteVideo,
     sidebarView,
+    activeTagIds,
+    aggregatedTagVideos,
+    tags,
+    getEffectiveVideoTags,
+    getParentTags,
   } = usePlaylistsContext();
 
   const [sortBy, setSortBy] = useState<SortOption>('uploaded');
@@ -36,21 +47,34 @@ export function VideoList({}: VideoListProps) {
   const [detailVideoId, setDetailVideoId] = useState<string | null>(null);
 
   const currentVideoId = currentVideo?.id ?? null;
-  const playlist = activePlaylist;
+  const tagFilterActive = activeTagIds.length > 0;
 
-  // Filter and sort videos - must be before any early returns
+  const tagsById = useMemo(() => {
+    const map = new Map<string, Tag>();
+    for (const t of tags) map.set(t.id, t);
+    return map;
+  }, [tags]);
+
+  const playlistsById = useMemo(() => {
+    const map = new Map<string, Playlist>();
+    for (const p of playlists) map.set(p.id, p);
+    return map;
+  }, [playlists]);
+
+  const resolveTags = (ids: string[]): Tag[] =>
+    ids.map((id) => tagsById.get(id)).filter((t): t is Tag => !!t);
+
+  // Normal-mode filter + sort within the active playlist - must run before any early returns.
   const filteredVideos = useMemo(() => {
-    if (!playlist) return [];
-    let videos = [...playlist.videos];
+    if (!activePlaylist) return [];
+    let videos = [...activePlaylist.videos];
 
-    // Filter
     if (filterStatus === 'starred') {
       videos = videos.filter(v => v.starred);
     } else if (filterStatus !== 'all') {
       videos = videos.filter(v => v.status === filterStatus);
     }
 
-    // Sort
     videos.sort((a, b) => {
       switch (sortBy) {
         case 'title':
@@ -60,7 +84,6 @@ export function VideoList({}: VideoListProps) {
         case 'status':
           return statusOrder[a.status] - statusOrder[b.status];
         case 'uploaded':
-          // Sort by upload date (newest first), videos without upload date go to end
           if (!a.uploadDate && !b.uploadDate) return 0;
           if (!a.uploadDate) return 1;
           if (!b.uploadDate) return -1;
@@ -72,7 +95,56 @@ export function VideoList({}: VideoListProps) {
     });
 
     return videos;
-  }, [playlist?.videos, sortBy, filterStatus]);
+  }, [activePlaylist?.videos, sortBy, filterStatus]);
+
+  // Tag-filter mode: a cross-library aggregated list, ignoring the playlist/tab selection.
+  if (tagFilterActive) {
+    const rows: Row[] = aggregatedTagVideos.map(e => ({video: e.video, playlistId: e.sourcePlaylistId}));
+    const detailRow = detailVideoId ? rows.find(r => r.video.id === detailVideoId) ?? null : null;
+
+    return (
+      <div className="flex-1 flex flex-col overflow-hidden">
+        <div className="flex-1 overflow-y-auto p-2 min-w-0">
+          {rows.length === 0 ? (
+            <div className="text-center py-12">
+              <EmptyVideoListIcon/>
+              <p className="text-muted-foreground mb-2">No videos match the selected tags</p>
+              <p className="text-muted-foreground/70 text-sm">Tag some videos, playlists, or channels to see them here.</p>
+            </div>
+          ) : (
+            <div className="grid gap-2 min-w-0">
+              {rows.map(({video, playlistId}) => {
+                const pl = playlistsById.get(playlistId);
+                return (
+                  <VideoCard
+                    key={video.id}
+                    video={video}
+                    tags={pl ? resolveTags(getEffectiveVideoTags(video, pl)) : []}
+                    isPlaying={video.id === currentVideoId}
+                    onShowDetail={() => setDetailVideoId(video.id)}
+                    onPlay={() => setCurrentVideo(video.id, playlistId)}
+                    onUpdate={(updates) => updateVideo(playlistId, video.id, updates)}
+                    onDelete={() => deleteVideo(playlistId, video.id)}
+                  />
+                );
+              })}
+            </div>
+          )}
+        </div>
+
+        {detailRow && (
+          <VideoDetailModal
+            video={detailRow.video}
+            parentTagIds={getParentTags(playlistsById.get(detailRow.playlistId))}
+            onUpdate={(updates) => updateVideo(detailRow.playlistId, detailRow.video.id, updates)}
+            onClose={() => setDetailVideoId(null)}
+          />
+        )}
+      </div>
+    );
+  }
+
+  const playlist = activePlaylist;
 
   if (!playlist) {
     const message = sidebarView === 'subscriptions'
@@ -128,9 +200,10 @@ export function VideoList({}: VideoListProps) {
               <VideoCard
                 key={video.id}
                 video={video}
+                tags={resolveTags(getEffectiveVideoTags(video, playlist))}
                 isPlaying={video.id === currentVideoId}
                 onShowDetail={() => setDetailVideoId(video.id)}
-                onPlay={() => setCurrentVideo(video.id)}
+                onPlay={() => setCurrentVideo(video.id, playlist.id)}
                 onUpdate={(updates) => updateVideo(playlist.id, video.id, updates)}
                 onDelete={() => deleteVideo(playlist.id, video.id)}
               />
@@ -142,6 +215,7 @@ export function VideoList({}: VideoListProps) {
       {detailVideo && (
         <VideoDetailModal
           video={detailVideo}
+          parentTagIds={getParentTags(playlist)}
           onUpdate={(updates) => updateVideo(playlist.id, detailVideo.id, updates)}
           onClose={() => setDetailVideoId(null)}
         />

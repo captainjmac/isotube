@@ -14,12 +14,12 @@ import {HeaderMenu} from "@/components/Header/HeaderMenu.tsx";
 import {ThemeToggle} from "@/components/Header/ThemeToggle.tsx";
 import {VideoDetailSummary} from "@/components/VideoDetail/VideoDetailSummary.tsx";
 import {HelpDialog} from "@/components/Header/HelpDialog.tsx";
+import {TagFilterBar} from "@/components/Tags/TagFilterBar.tsx";
 
 function App() {
   const {
     playlists,
     activePlaylist,
-    playingPlaylist,
     currentVideo,
     currentVideoId,
     currentVideoPlaylistId,
@@ -27,8 +27,11 @@ function App() {
     setVideoStatus,
     playNext,
     playPrevious,
+    hasNext,
+    hasPrevious,
     sidebarView,
     setSidebarView,
+    activeTagIds,
     userPlaylists,
     subscriptions,
     addVideo,
@@ -44,10 +47,9 @@ function App() {
 
   const playerRef = useRef<PlayerHandle>(null);
 
-  // Find current video index for prev/next (in the playlist it was started from)
-  const currentIndex = playingPlaylist?.videos.findIndex(v => v.id === currentVideoId) ?? -1;
-  const hasNext = currentIndex >= 0 && currentIndex < (playingPlaylist?.videos.length ?? 0) - 1;
-  const hasPrevious = currentIndex > 0;
+  // When a tag filter is active the sidebar shows the cross-library aggregated list instead of
+  // the per-tab playlist/channel navigation.
+  const tagFilterActive = activeTagIds.length > 0;
 
   // Handle progress updates (track on the playlist the video was started from)
   const handleProgress = useCallback((seconds: number, duration: number) => {
@@ -120,15 +122,20 @@ function App() {
 
       {/* Left column: Playlists + Videos stacked (desktop only) */}
       <Sidebar className="hidden lg:flex relative z-10 reveal reveal-2">
-        <SidebarTabs
-          activeTab={sidebarView}
-          onTabChange={setSidebarView}
-          watchLaterCount={watchLaterPlaylist?.videos.length ?? 0}
-          playlistCount={userPlaylists.length}
-          subscriptionCount={subscriptions.length}
-        />
-        {sidebarView === 'playlists' && <PlaylistList/>}
-        {sidebarView === 'subscriptions' && <SubscriptionList/>}
+        <TagFilterBar/>
+        {!tagFilterActive && (
+          <>
+            <SidebarTabs
+              activeTab={sidebarView}
+              onTabChange={setSidebarView}
+              watchLaterCount={watchLaterPlaylist?.videos.length ?? 0}
+              playlistCount={userPlaylists.length}
+              subscriptionCount={subscriptions.length}
+            />
+            {sidebarView === 'playlists' && <PlaylistList/>}
+            {sidebarView === 'subscriptions' && <SubscriptionList/>}
+          </>
+        )}
         <VideoList/>
       </Sidebar>
 
@@ -146,15 +153,20 @@ function App() {
             />
           </div>
         )}
-        <SidebarTabs
-          activeTab={sidebarView}
-          onTabChange={setSidebarView}
-          watchLaterCount={watchLaterPlaylist?.videos.length ?? 0}
-          playlistCount={userPlaylists.length}
-          subscriptionCount={subscriptions.length}
-        />
-        {sidebarView === 'playlists' && <PlaylistList/>}
-        {sidebarView === 'subscriptions' && <SubscriptionList/>}
+        <TagFilterBar/>
+        {!tagFilterActive && (
+          <>
+            <SidebarTabs
+              activeTab={sidebarView}
+              onTabChange={setSidebarView}
+              watchLaterCount={watchLaterPlaylist?.videos.length ?? 0}
+              playlistCount={userPlaylists.length}
+              subscriptionCount={subscriptions.length}
+            />
+            {sidebarView === 'playlists' && <PlaylistList/>}
+            {sidebarView === 'subscriptions' && <SubscriptionList/>}
+          </>
+        )}
         <VideoList/>
       </section>
 

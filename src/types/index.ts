@@ -1,5 +1,12 @@
 export type VideoStatus = 'unwatched' | 'in_progress' | 'completed';
 
+export interface Tag {
+  id: string;        // UUID
+  name: string;
+  createdAt: number; // Timestamp
+  color?: string;    // Optional accent color (hex/css)
+}
+
 export interface Video {
   id: string;           // YouTube video ID
   url: string;          // Full YouTube URL
@@ -13,6 +20,7 @@ export interface Video {
   starred?: boolean;    // Favorited by user
   addedAt: number;      // Timestamp
   uploadDate?: string;  // YouTube upload date (ISO string)
+  tags?: string[];      // Tag ids. Non-empty = overrides inherited tags; absent/empty = inherit
 }
 
 export interface Playlist {
@@ -21,6 +29,7 @@ export interface Playlist {
   videos: Video[];
   createdAt: number;
   linkedSubscriptionId?: string | null;  // null/undefined = user-defined playlist
+  tags?: string[];                        // Tag ids inherited by this playlist's videos
 }
 
 export interface Subscription {
@@ -31,6 +40,7 @@ export interface Subscription {
   linkedPlaylistId: string;    // ID of auto-managed playlist
   lastRefreshed: number | null;
   createdAt: number;
+  tags?: string[];             // Tag ids inherited by this channel's videos
 }
 
 export type SidebarView = 'watch-later' | 'playlists' | 'subscriptions';
@@ -38,6 +48,7 @@ export type SidebarView = 'watch-later' | 'playlists' | 'subscriptions';
 export interface AppState {
   playlists: Playlist[];
   subscriptions: Subscription[];
+  tags: Tag[];                          // Tag registry
   activePlaylistId: string | null;
   activeSubscriptionId: string | null;
   activeUserPlaylistId: string | null;

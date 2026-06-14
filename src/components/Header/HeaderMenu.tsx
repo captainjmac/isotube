@@ -10,12 +10,14 @@ import {usePlaylistsContext} from '@/hooks/PlaylistsContext';
 import {useSyncSettings} from '@/hooks/useSyncSettings';
 import {useCloudSync} from '@/hooks/useCloudSync';
 import {SyncSettingsDialog} from '@/components/Settings/SyncSettingsDialog';
+import {ManageTagsDialog} from '@/components/Tags/ManageTagsDialog';
 import type {AppState} from '@/types';
 
 export function HeaderMenu() {
     const {exportState, importState} = usePlaylistsContext();
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [syncDialogOpen, setSyncDialogOpen] = useState(false);
+    const [tagsDialogOpen, setTagsDialogOpen] = useState(false);
 
     const currentState = exportState();
     const {settings, setSyncKey, setEnabled, setLastSyncedAt, clearSettings} = useSyncSettings();
@@ -123,6 +125,18 @@ export function HeaderMenu() {
                         Export
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={() => setTagsDialogOpen(true)}>
+                        <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M7 7h.01M7 3h5a2 2 0 011.414.586l7 7a2 2 0 010 2.828l-5 5a2 2 0 01-2.828 0l-7-7A2 2 0 013 12V7a4 4 0 014-4z"
+                            />
+                        </svg>
+                        Manage Tags
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
                     <DropdownMenuItem onClick={() => setSyncDialogOpen(true)}>
                         <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path
@@ -161,6 +175,11 @@ export function HeaderMenu() {
                     )}
                 </DropdownMenuContent>
             </DropdownMenu>
+
+            <ManageTagsDialog
+                open={tagsDialogOpen}
+                onOpenChange={setTagsDialogOpen}
+            />
 
             <SyncSettingsDialog
                 open={syncDialogOpen}

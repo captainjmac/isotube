@@ -1,4 +1,5 @@
 import type {Video} from '@/types';
+import {API_BASE} from '@/storage/apiBase';
 
 /**
  * Extract YouTube video ID from various URL formats:
@@ -51,8 +52,10 @@ export function getThumbnailUrl(videoId: string, quality: 'default' | 'medium' |
   return `https://img.youtube.com/vi/${videoId}/${qualityMap[quality]}.jpg`;
 }
 
-// YouTube Data API v3 key
-const YOUTUBE_API_KEY = 'AIzaSyDskb920QxjGsJRJUhZ5z3g5o3Z0j3T_M0';
+// YouTube Data API v3 is proxied through the app's own backend so the API key
+// stays server-side (see functions/api/youtube). `path` is a v3 resource + query,
+// e.g. `videos?part=snippet&id=...`.
+const YT = (path: string): string => `${API_BASE}/api/youtube/${path}`;
 
 /**
  * Build a descriptive error message from a failed YouTube API response.
@@ -100,7 +103,7 @@ export async function fetchVideoMetadataFromAPI(videoId: string): Promise<{
   uploadDate: string;
   description: string;
 } | null> {
-  const url = `https://www.googleapis.com/youtube/v3/videos?part=snippet&id=${videoId}&key=${YOUTUBE_API_KEY}`;
+  const url = YT(`videos?part=snippet&id=${videoId}`);
 
   try {
     const response = await fetch(url);
@@ -247,7 +250,7 @@ export interface PlaylistImportResult {
  * Fetch playlist metadata (title, description) from YouTube Data API v3
  */
 export async function fetchPlaylistMetadata(playlistId: string): Promise<PlaylistMetadata | null> {
-    const url = `https://www.googleapis.com/youtube/v3/playlists?part=snippet,contentDetails&id=${playlistId}&key=${YOUTUBE_API_KEY}`;
+    const url = YT(`playlists?part=snippet,contentDetails&id=${playlistId}`);
 
     try {
         const response = await fetch(url);
@@ -284,11 +287,10 @@ export async function fetchPlaylistVideos(playlistId: string): Promise<PlaylistI
     let pageToken: string | undefined = undefined;
 
     do {
-        const url = new URL('https://www.googleapis.com/youtube/v3/playlistItems');
+        const url = new URL(YT('playlistItems'), window.location.origin);
         url.searchParams.set('part', 'snippet');
         url.searchParams.set('playlistId', playlistId);
         url.searchParams.set('maxResults', '50');
-        url.searchParams.set('key', YOUTUBE_API_KEY);
         if (pageToken) {
             url.searchParams.set('pageToken', pageToken);
         }
@@ -454,7 +456,7 @@ interface YouTubeSearchAPIResponse {
  * Fetch channel metadata by channel ID
  */
 async function fetchChannelById(channelId: string): Promise<ChannelMetadata | null> {
-    const url = `https://www.googleapis.com/youtube/v3/channels?part=snippet,contentDetails&id=${channelId}&key=${YOUTUBE_API_KEY}`;
+    const url = YT(`channels?part=snippet,contentDetails&id=${channelId}`);
 
     try {
         const response = await fetch(url);
@@ -486,7 +488,7 @@ async function fetchChannelById(channelId: string): Promise<ChannelMetadata | nu
  * Fetch channel metadata by username (legacy /user/ URLs)
  */
 async function fetchChannelByUsername(username: string): Promise<ChannelMetadata | null> {
-    const url = `https://www.googleapis.com/youtube/v3/channels?part=snippet,contentDetails&forUsername=${username}&key=${YOUTUBE_API_KEY}`;
+    const url = YT(`channels?part=snippet,contentDetails&forUsername=${username}`);
 
     try {
         const response = await fetch(url);
@@ -519,7 +521,7 @@ async function fetchChannelByUsername(username: string): Promise<ChannelMetadata
  * Uses the forHandle parameter on the Channels API (1 quota unit vs 100 for search)
  */
 async function fetchChannelByHandle(handle: string): Promise<ChannelMetadata | null> {
-    const url = `https://www.googleapis.com/youtube/v3/channels?part=snippet,contentDetails&forHandle=${encodeURIComponent(handle)}&key=${YOUTUBE_API_KEY}`;
+    const url = YT(`channels?part=snippet,contentDetails&forHandle=${encodeURIComponent(handle)}`);
 
     try {
         const response = await fetch(url);
@@ -552,7 +554,7 @@ async function fetchChannelByHandle(handle: string): Promise<ChannelMetadata | n
  * Uses search API (higher quota cost) then fetches full channel details
  */
 async function fetchChannelBySearch(query: string): Promise<ChannelMetadata | null> {
-    const searchUrl = `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${encodeURIComponent(query)}&type=channel&maxResults=1&key=${YOUTUBE_API_KEY}`;
+    const searchUrl = YT(`search?part=snippet&q=${encodeURIComponent(query)}&type=channel&maxResults=1`);
 
     try {
         const response = await fetch(searchUrl);
@@ -600,11 +602,10 @@ export async function fetchChannelVideos(
     uploadsPlaylistId: string,
     maxResults: number = 10
 ): Promise<Omit<Video, 'addedAt'>[]> {
-    const url = new URL('https://www.googleapis.com/youtube/v3/playlistItems');
+    const url = new URL(YT('playlistItems'), window.location.origin);
     url.searchParams.set('part', 'snippet');
     url.searchParams.set('playlistId', uploadsPlaylistId);
     url.searchParams.set('maxResults', String(maxResults));
-    url.searchParams.set('key', YOUTUBE_API_KEY);
 
     try {
         const response = await fetch(url.toString());

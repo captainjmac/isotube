@@ -9,6 +9,11 @@ export default defineConfig({
     server: {
         host: 'localhost',
         port: 5173,
+        // Proxy API calls to `wrangler pages dev` (Functions + local D1) so the
+        // browser sees same-origin /api/* during development.
+        proxy: {
+            '/api': 'http://localhost:8788',
+        },
     },
     resolve: {
         alias: {

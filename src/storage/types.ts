@@ -7,14 +7,12 @@ export interface StorageAdapter {
 
 export interface SyncSettings {
     enabled: boolean;
-    supabaseUrl: string;
-    supabaseAnonKey: string;
+    syncKey: string;
     lastSyncedAt: number | null;
 }
 
 export const DEFAULT_SYNC_SETTINGS: SyncSettings = {
     enabled: false,
-    supabaseUrl: '',
-    supabaseAnonKey: '',
+    syncKey: '',
     lastSyncedAt: null,
 };

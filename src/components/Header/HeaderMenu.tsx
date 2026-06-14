@@ -18,7 +18,7 @@ export function HeaderMenu() {
     const [syncDialogOpen, setSyncDialogOpen] = useState(false);
 
     const currentState = exportState();
-    const {settings, setCredentials, setEnabled, setLastSyncedAt, clearSettings} = useSyncSettings();
+    const {settings, setSyncKey, setEnabled, setLastSyncedAt, clearSettings} = useSyncSettings();
 
     const {
         isConnected,
@@ -170,7 +170,7 @@ export function HeaderMenu() {
                 isSyncing={isSyncing}
                 lastSyncedAt={lastSyncedAt}
                 error={error}
-                onSave={setCredentials}
+                onSave={setSyncKey}
                 onTestConnection={testConnection}
                 onDisconnect={handleDisconnect}
                 onEnable={setEnabled}

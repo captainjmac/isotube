@@ -1,0 +1,15 @@
+name = "isotube"
+compatibility_date = "2025-06-01"
+pages_build_output_dir = "dist"
+
+# D1 database binding. Create with `wrangler d1 create isotube` and paste the
+# returned database_id below (and bind `DB` -> isotube in the Pages dashboard).
+[[d1_databases]]
+binding = "DB"
+database_name = "isotube"
+database_id = "d244d48c-d852-4a2c-844a-06d48e19969c"
+
+# Secrets (SYNC_SECRET, YOUTUBE_API_KEY) are NOT stored here. Set them via the
+# Pages dashboard (Settings -> Environment variables, encrypted) for both
+# Production and Preview, or `wrangler pages secret put <NAME>`. For local dev,
+# put them in .dev.vars (gitignored).

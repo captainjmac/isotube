@@ -1,6 +1,6 @@
 # Isotube
 
-A YouTube playlist manager that lets you save, organize, and track progress on YouTube videos outside of the main youtube site to avoid distractions. Deployed to GitHub Pages at `https://isotube.jmac.co`.
+A YouTube playlist manager that lets you save, organize, and track progress on YouTube videos outside of the main youtube site to avoid distractions. Deployed to Cloudflare Pages at `https://isotube.jmac.co`.
 
 ## Tech Stack
 
@@ -61,7 +61,28 @@ src/
 
 - Embeds use YouTube IFrame API with controls disabled
 - Custom progress bar and playback controls in Player component
-- Video metadata fetched via oembed API (see `src/utils/youtube.ts`)
+- Video/playlist/channel metadata fetched via the YouTube Data API v3, **proxied
+  through `functions/api/youtube/`** so the API key stays server-side. Client code
+  in `src/utils/youtube.ts` calls `/api/youtube/<resource>` (via the `YT()` helper)
+  with no key. The oEmbed fallback (`fetchVideoMetadata`) still calls YouTube directly
+
+## Backend (Cloudflare Pages Functions + D1)
+
+- `functions/api/mint` (`POST`) returns a server-signed sync code (`uuid.HMAC`).
+- `functions/api/state/[key]` (`GET`/`PUT`) reads/writes the whole `AppState` as a
+  JSON blob in D1 (table `isotube_state`, see `schema.sql`), keyed by sync code.
+  Keys are HMAC-validated server-side; payloads capped at ~1 MB.
+- `functions/api/youtube/[[path]]` proxies whitelisted YouTube Data API resources.
+- `functions/_shared.ts` holds `Env`, HMAC helpers, and `json()`. Functions type-check
+  against `functions/tsconfig.json` (Workers types), separate from the app build.
+- Secrets `SYNC_SECRET` + `YOUTUBE_API_KEY`: `.dev.vars` locally, Pages env vars in prod.
+
+## Cloud Sync
+
+- Offline-first: `localStorage` (`isotube-state`) is the source of truth; sync is additive.
+- `StorageAdapter` (`src/storage/`) is the seam; `CloudflareAdapter` talks to the API.
+- `useCloudSync` does debounced (2s) last-write-wins sync; `useSyncSettings` stores the
+  sync code and migrates away any legacy Supabase settings.
 
 ## Development
 
@@ -69,12 +90,19 @@ src/
 - Source `index.html` lives at the repo root and loads `/src/main.tsx`.
 - No HTML generation step — Vite handles the entry HTML directly.
 
-## Deployment to GitHub Pages
+## Deployment to Cloudflare Pages
 
-Isotube is a standalone GitHub Pages site served at `https://isotube.jmac.co`.
+Isotube is a Cloudflare Pages site (static `dist/` + Functions) at `https://isotube.jmac.co`.
 
-- Pushes to `main` trigger `.github/workflows/deploy.yml`, which runs
-  `npm ci && npm run build` and publishes `dist/` via the official Pages actions.
-- **No build artifacts are committed** — `dist/` is gitignored and produced by CI.
-- The custom domain is set by `public/CNAME` (`isotube.jmac.co`), which Vite copies
-  into `dist/` on every build.
+- Deployed via Cloudflare Pages **Git integration**: pushes to `main` run
+  `npm run build` (output `dist/`) and deploy `functions/` automatically.
+- **No build artifacts are committed** — `dist/` is gitignored and produced by the build.
+- D1 binding `DB` → `isotube` and encrypted env vars (`SYNC_SECRET`, `YOUTUBE_API_KEY`)
+  are configured on the Pages project. Schema lives in `schema.sql`.
+- Custom domain is configured in the Pages dashboard (no `CNAME` file needed).
+
+### Local dev with the backend
+
+- `npm run dev` runs the app on :5173 (HMR) and proxies `/api/*` to `wrangler pages dev`.
+- Run the API with `wrangler pages dev --port 8788` after creating `.dev.vars`
+  (copy `.dev.vars.example`) and a local D1: `wrangler d1 execute isotube --local --file=schema.sql`.

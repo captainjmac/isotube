@@ -1,0 +1,5 @@
+# Copy to .dev.vars (gitignored) for local `wrangler pages dev`.
+# SYNC_SECRET: any long random string; signs/validates sync keys (HMAC).
+SYNC_SECRET=dev-only-change-me
+# YOUTUBE_API_KEY: a YouTube Data API v3 key (server-side only).
+YOUTUBE_API_KEY=your-youtube-data-api-v3-key

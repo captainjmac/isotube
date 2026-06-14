@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { SupabaseAdapter } from '@/storage/SupabaseAdapter';
+import { CloudflareAdapter } from '@/storage/CloudflareAdapter';
 import type { SyncSettings } from '@/storage/types';
 import type { AppState } from '@/types';
 
@@ -16,7 +16,7 @@ interface UseCloudSyncResult {
     lastSyncedAt: Date | null;
     error: string | null;
     syncNow: () => Promise<void>;
-    testConnection: (url: string, anonKey: string) => Promise<{ success: boolean; error?: string }>;
+    testConnection: (syncKey: string) => Promise<{ success: boolean; error?: string }>;
     disconnect: () => Promise<void>;
 }
 
@@ -35,7 +35,7 @@ export function useCloudSync({
         settings.lastSyncedAt ? new Date(settings.lastSyncedAt) : null
     );
 
-    const adapterRef = useRef<SupabaseAdapter | null>(null);
+    const adapterRef = useRef<CloudflareAdapter | null>(null);
     const debounceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const lastSavedStateRef = useRef<string>('');
     const isInitialLoadRef = useRef(true);
@@ -53,11 +53,8 @@ export function useCloudSync({
 
     // Create/update adapter when credentials change
     useEffect(() => {
-        if (settings.enabled && settings.supabaseUrl && settings.supabaseAnonKey) {
-            adapterRef.current = new SupabaseAdapter(
-                settings.supabaseUrl,
-                settings.supabaseAnonKey
-            );
+        if (settings.enabled && settings.syncKey) {
+            adapterRef.current = new CloudflareAdapter(settings.syncKey);
             // Initialize and load remote state
             initializeAndLoad();
         } else {
@@ -74,7 +71,7 @@ export function useCloudSync({
             try {
                 const initialized = await adapterRef.current.initialize();
                 if (!initialized) {
-                    setError('Failed to connect to Supabase');
+                    setError('Failed to connect');
                     setIsConnected(false);
                     return;
                 }
@@ -114,7 +111,7 @@ export function useCloudSync({
                 clearTimeout(debounceTimerRef.current);
             }
         };
-    }, [settings.enabled, settings.supabaseUrl, settings.supabaseAnonKey]);
+    }, [settings.enabled, settings.syncKey]);
 
     // Auto-save on state changes (debounced)
     useEffect(() => {
@@ -184,8 +181,8 @@ export function useCloudSync({
 
     // Test connection without fully connecting
     const testConnection = useCallback(
-        async (url: string, anonKey: string): Promise<{ success: boolean; error?: string }> => {
-            const testAdapter = new SupabaseAdapter(url, anonKey);
+        async (syncKey: string): Promise<{ success: boolean; error?: string }> => {
+            const testAdapter = new CloudflareAdapter(syncKey);
             return testAdapter.testConnection();
         },
         []

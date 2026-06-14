@@ -4,11 +4,29 @@ import { DEFAULT_SYNC_SETTINGS } from '@/storage/types';
 
 const STORAGE_KEY = 'isotube-sync-settings';
 
+/**
+ * Normalize whatever is in localStorage into the current SyncSettings shape.
+ * Old installs stored Supabase credentials ({ supabaseUrl, supabaseAnonKey });
+ * those are dropped and sync is disabled until the user opts back in with a sync
+ * code. The playlist data (isotube-state) is never touched here.
+ */
+function normalize(raw: unknown): SyncSettings {
+    const r = raw as Partial<SyncSettings> & { lastSyncedAt?: number | null };
+    if (r && typeof r.syncKey === 'string') {
+        return {
+            enabled: Boolean(r.enabled),
+            syncKey: r.syncKey,
+            lastSyncedAt: r.lastSyncedAt ?? null,
+        };
+    }
+    return { ...DEFAULT_SYNC_SETTINGS, lastSyncedAt: r?.lastSyncedAt ?? null };
+}
+
 export function useSyncSettings() {
     const [settings, setSettings] = useState<SyncSettings>(() => {
         try {
             const stored = window.localStorage.getItem(STORAGE_KEY);
-            return stored ? JSON.parse(stored) : DEFAULT_SYNC_SETTINGS;
+            return stored ? normalize(JSON.parse(stored)) : DEFAULT_SYNC_SETTINGS;
         } catch {
             return DEFAULT_SYNC_SETTINGS;
         }
@@ -35,23 +53,23 @@ export function useSyncSettings() {
         updateSettings({ enabled });
     }, [updateSettings]);
 
-    const setCredentials = useCallback((supabaseUrl: string, supabaseAnonKey: string) => {
-        updateSettings({ supabaseUrl, supabaseAnonKey });
+    const setSyncKey = useCallback((syncKey: string) => {
+        updateSettings({ syncKey });
     }, [updateSettings]);
 
     const setLastSyncedAt = useCallback((timestamp: number | null) => {
         updateSettings({ lastSyncedAt: timestamp });
     }, [updateSettings]);
 
-    const hasCredentials = settings.supabaseUrl.length > 0 && settings.supabaseAnonKey.length > 0;
+    const hasSyncKey = settings.syncKey.length > 0;
 
     return {
         settings,
         updateSettings,
         clearSettings,
         setEnabled,
-        setCredentials,
+        setSyncKey,
         setLastSyncedAt,
-        hasCredentials,
+        hasSyncKey,
     };
 }

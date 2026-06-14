@@ -4,10 +4,8 @@ import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 
 // https://vite.dev/config/
-export default defineConfig(({command}) => ({
+export default defineConfig({
     plugins: [react(), tailwindcss()],
-    // Use root path for dev, /isotube/ for production
-    base: command === 'serve' ? '/' : '/isotube/',
     server: {
         host: 'localhost',
         port: 5173,
@@ -17,16 +15,4 @@ export default defineConfig(({command}) => ({
             '@': path.resolve(__dirname, './src'),
         },
     },
-    build: {
-        outDir: 'dist',
-        emptyOutDir: true,
-        minify: false,
-        rollupOptions: {
-            output: {
-                entryFileNames: 'assets/app.js',
-                chunkFileNames: 'assets/[name].js',
-                assetFileNames: 'assets/[name][extname]',
-            },
-        },
-    },
-}))
+})

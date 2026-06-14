@@ -1,6 +1,6 @@
 # Isotube
 
-A YouTube playlist manager that lets you save, organize, and track progress on YouTube videos outside of the main youtube site to avoid distractions. Deployed to GitHub Pages at `/isotube/`.
+A YouTube playlist manager that lets you save, organize, and track progress on YouTube videos outside of the main youtube site to avoid distractions. Deployed to GitHub Pages at `https://isotube.jmac.co`.
 
 ## Tech Stack
 
@@ -15,7 +15,7 @@ A YouTube playlist manager that lets you save, organize, and track progress on Y
 
 - `npm run dev` - Start dev server
 - `npm run build` - Type check and build
-- `npm run build:deploy` - Build and copy assets for GitHub Pages deployment
+- `npm run preview` - Preview the production build locally
 - `npm run lint` - Run ESLint
 
 ## Code Style
@@ -63,61 +63,18 @@ src/
 - Custom progress bar and playback controls in Player component
 - Video metadata fetched via oembed API (see `src/utils/youtube.ts`)
 
-## Development vs Production
+## Development
 
-The project uses a template-based HTML generation system for seamless dev/prod workflows:
-
-### HTML Template System
-- `index.template.html` - Source template (tracked in git)
-- `index.html` - Auto-generated file (gitignored, never committed)
-- `scripts/generate-html.js` - Generation script
-- Template placeholders: `{{VITE_ICON}}`, `{{VITE_HEAD}}`, `{{VITE_ENTRY}}`
-
-The Vite config uses conditional base paths:
-- **Development** (`npm run dev`): Uses `base: '/'` for local development at `http://localhost:5173/`
-- **Production** (`npm run build`): Uses `base: '/isotube/'` for GitHub Pages deployment
-
-### Development Workflow
-```bash
-cd isotube
-npm run dev              # Auto-generates dev index.html, starts server
-# Edit files in src/, changes reflect immediately
-# No manual file management needed!
-```
-
-The `predev` hook automatically generates the dev `index.html` before starting the server.
-
-### Production Build Workflow
-```bash
-cd isotube
-npm run build:deploy     # Auto-generates template, builds, copies files
-cd ..
-git add isotube/index.template.html isotube/assets/  # Note: NOT index.html!
-git commit -m "Update isotube"
-git push
-```
-
-The `prebuild` hook automatically generates the template before building.
-
-### Switching Between Dev and Production
-No manual steps needed! The HTML is automatically regenerated when you run:
-- `npm run dev` - Generates dev version
-- `npm run build:deploy` - Generates and builds production version
-
-The `index.html` file is never committed to git, so there's nothing to restore or switch.
+- `npm run dev` runs Vite at `http://localhost:5173/` with `base: '/'`.
+- Source `index.html` lives at the repo root and loads `/src/main.tsx`.
+- No HTML generation step — Vite handles the entry HTML directly.
 
 ## Deployment to GitHub Pages
 
-Isotube is deployed as part of the parent Jekyll site at `/isotube/`.
+Isotube is a standalone GitHub Pages site served at `https://isotube.jmac.co`.
 
-**Build for deployment**:
-```bash
-npm run build:deploy
-```
-
-This creates production-optimized files at:
-- `isotube/index.html` (copied from dist, with `/isotube/` paths)
-- `isotube/assets/app.js` (main React bundle, ~1MB)
-- `isotube/assets/index.css` (compiled Tailwind CSS, ~60KB)
-
-**Important**: These built files must be committed to git for GitHub Pages to serve them.
+- Pushes to `main` trigger `.github/workflows/deploy.yml`, which runs
+  `npm ci && npm run build` and publishes `dist/` via the official Pages actions.
+- **No build artifacts are committed** — `dist/` is gitignored and produced by CI.
+- The custom domain is set by `public/CNAME` (`isotube.jmac.co`), which Vite copies
+  into `dist/` on every build.
